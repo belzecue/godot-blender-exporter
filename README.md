@@ -3,7 +3,13 @@
 Native Godot scene format exporter for [Blender](https://www.blender.org), making the
 export process to [Godot Engine](https://godotengine.org) as straightforward as possible.
 
-*WARNING*: This exporter is experimental, and still lacks many features.
+___
+
+**Warning:** This exporter is experimental, and still lacks many features.
+If you need a full-featured import-export pipeline, consider using glTF 2.0 instead.
+(The glTF 2.0 exporter is built into Blender.)
+
+___
 
 ## Installation
 
@@ -17,12 +23,18 @@ export process to [Godot Engine](https://godotengine.org) as straightforward as 
 If you find bugs or want to suggest improvements, please open an issue on the
 upstream [GitHub repository](https://github.com/godotengine/blender-exporter).
 
+
+## Usage
+
+See [the documentation](https://docs.godotengine.org/en/stable/getting_started/workflow/assets/escn_exporter/index.html)
+included in the official Godot documentation.
+
 ## Development Notes
 
 This repository includes a Makefile to assist with development. Running
 `make` from the project root will:
 
-1. Export all of the blend files from the `tests/scenes` directory.  
+1. Export all of the blend files from the `tests/scenes` directory.
    If you add a feature, it is suggested that you add a new blend file to
    the `tests/scenes` directory that uses this feature.
 2. Runs `diff` on the output files compared to the reference exports. This acts

@@ -464,13 +464,15 @@ void node_math_sqrt_no_clamp(float value1, float value2, out float result) {
 """),
 
     ShaderFunction(code="""
-void node_math_absolute_no_clamp(float value1, float value2, out float result) {
+void node_math_absolute_no_clamp(float value1, float value2,
+        out float result) {
     result = abs(value1);
 }
-"""),
+"""),  # nopep8
 
     ShaderFunction(code="""
-void node_math_minimum_no_clamp(float value1, float value2, out float result) {
+void node_math_minimum_no_clamp(float value1, float value2,
+        out float result) {
     result = min(value1, value2);
 }
 """),
@@ -482,16 +484,18 @@ void node_math_maximum_no_clamp(float value1, float value2, out float result) {
 """),
 
     ShaderFunction(code="""
-void node_math_less_than_no_clamp(float value1, float value2, out float result) {
+void node_math_less_than_no_clamp(float value1, float value2,
+        out float result) {
     result = float(value1 < value2);
 }
-"""),
+"""),  # nopep8
 
     ShaderFunction(code="""
-void node_math_greater_than_no_clamp(float value1, float value2, out float result) {
+void node_math_greater_than_no_clamp(float value1, float value2,
+        out float result) {
     result = float(value1 > value2);
 }
-"""),
+"""),  # nopep8
 
     ShaderFunction(code="""
 void node_math_round_no_clamp(float value1, float value2, out float result) {
@@ -551,19 +555,21 @@ void node_math_arcsine_no_clamp(float value1, float value2, out float result) {
 """),
 
     ShaderFunction(code="""
-void node_math_arccosine_no_clamp(float value1, float value2, out float result) {
+void node_math_arccosine_no_clamp(float value1, float value2,
+        out float result) {
     if (value1 < 0.0 || value1 > 1.0)
         result = 0.0;
     else
         result = acos(value1);
 }
-"""),
+"""),  # nopep8
 
     ShaderFunction(code="""
-void node_math_arctangent_no_clamp(float value1, float value2, out float result) {
+void node_math_arctangent_no_clamp(float value1, float value2,
+        out float result) {
     result = atan(value1);
 }
-"""),
+"""),  # nopep8
 
     ShaderFunction(code="""
 void node_math_arctan2_no_clamp(float value1, float value2, out float result) {
@@ -644,10 +650,11 @@ void node_math_less_than_clamp(float value1, float value2, out float result) {
 """),
 
     ShaderFunction(code="""
-void node_math_greater_than_clamp(float value1, float value2, out float result) {
+void node_math_greater_than_clamp(float value1, float value2,
+        out float result) {
     result = clamp(float(value1 > value2), 0.0, 1.0);
 }
-"""),
+"""),  # nopep8
 
     ShaderFunction(code="""
 void node_math_round_clamp(float value1, float value2, out float result) {
@@ -832,6 +839,39 @@ void point_space_convert_view_to_world(inout vec3 pos, in mat4 inv_view_mat) {
     ShaderFunction(code="""
 void dir_space_convert_world_to_view(inout vec3 dir, in mat4 view_mat) {
     dir = normalize(view_mat * vec4(dir, 0.0)).xyz;
+}
+"""),
+
+    ShaderFunction(code="""
+void location_to_mat4(in vec3 loc, out mat4 loc_mat) {
+    loc_mat = mat4(vec4(1.0, 0.0, 0.0, 0),
+                   vec4(0.0, 1.0, 0.0, 0),
+                   vec4(0.0, 0.0, 1.0, 0),
+                   vec4(loc, 1.0));
+}
+"""),
+
+    ShaderFunction(code="""
+void euler_angle_XYZ_to_mat4(in vec3 rot, out mat4 rot_mat) {
+    mat3 rx = mat3(vec3(1, 0, 0),
+                   vec3(0, cos(rot.x), sin(rot.x)),
+                   vec3(0, -sin(rot.x), cos(rot.x)));
+    mat3 ry = mat3(vec3(cos(rot.y), 0, -sin(rot.y)),
+                   vec3(0, 1, 0),
+                   vec3(sin(rot.y), 0, cos(rot.y)));
+    mat3 rz = mat3(vec3(cos(rot.z), sin(rot.z), 0),
+                   vec3(-sin(rot.z), cos(rot.z), 0),
+                   vec3(0, 0, 1));
+    rot_mat = mat4(rz * ry * rx);
+}
+"""),
+
+    ShaderFunction(code="""
+void scale_to_mat4(in vec3 scale, out mat4 scale_mat) {
+    scale_mat = mat4(vec4(scale.x, 0.0, 0.0, 0.0),
+                     vec4(0.0, scale.y, 0.0, 0.0),
+                     vec4(0.0, 0.0, scale.z, 0.0),
+                     vec4(0.0, 0.0, 0.0, 1.0));
 }
 """),
 

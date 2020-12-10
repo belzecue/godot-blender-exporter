@@ -23,17 +23,18 @@ import bpy
 from bpy.props import StringProperty, BoolProperty, FloatProperty, EnumProperty
 from bpy_extras.io_utils import ExportHelper
 from .structures import ValidationError
+from . import export_godot
 
 bl_info = {  # pylint: disable=invalid-name
     "name": "Godot Engine Exporter",
-    "author": "Juan Linietsky",
+    "author": "Lu Jiacheng, Geoffrey Irons, Juan Linietsky",
     "blender": (2, 80, 0),
     "location": "File > Import-Export",
-    "description": ("Export Godot Scenes to a format that can be efficiently "
-                    "imported."),
+    "description": ("Export Blender scenes to a format that can be "
+                    "efficiently imported in Godot Engine."),
     "warning": "",
     "wiki_url": ("https://godotengine.org"),
-    "tracker_url": "https://github.com/godotengine/blender-exporter",
+    "tracker_url": "https://github.com/godotengine/godot-blender-exporter",
     "support": "OFFICIAL",
     "category": "Import-Export"
 }
@@ -58,7 +59,8 @@ class ExportGodot(bpy.types.Operator, ExportHelper):
             ("CAMERA", "Camera", ""),
             ("LIGHT", "Light", ""),
             ("ARMATURE", "Armature", ""),
-            ("GEOMETRY", "Geometry", "")
+            ("GEOMETRY", "Geometry", ""),
+            ("PARTICLE", "Particle", "")
         ),
         default={
             "EMPTY",
@@ -78,6 +80,12 @@ class ExportGodot(bpy.types.Operator, ExportHelper):
     use_export_selected: BoolProperty(
         name="Only Selected Objects",
         description="Export only selected objects",
+        default=False,
+    )
+
+    use_included_in_render: BoolProperty(
+        name="Only Rendered Objects",
+        description="Export only objects included in render",
         default=False,
     )
     use_mesh_modifiers: BoolProperty(
@@ -211,7 +219,6 @@ class ExportGodot(bpy.types.Operator, ExportHelper):
                 "xna_validate",
             ))
 
-            from . import export_godot
             return export_godot.save(self, context, **keywords)
         except ValidationError as error:
             self.report({'ERROR'}, str(error))
@@ -269,7 +276,6 @@ def export(filename, overrides=None):
         def __init__(self):
             self.report = print
 
-    from . import export_godot
     export_godot.save(FakeOp(), bpy.context, filename, **default_settings)
 
 

@@ -161,7 +161,8 @@ class NodeTemplate(FileEntry):
         self.parent = parent_node
 
         # filter out special character
-        node_name = name.replace('.', '').replace('/', '').replace('\\', '')
+        invalid_chs = ('.', '\\', '/', ':')
+        node_name = ''.join(filter(lambda ch: ch not in invalid_chs, name))
 
         if parent_node is not None:
             # solve duplication
@@ -333,6 +334,22 @@ class NodePath:
         )
 
 
+class RGBA:
+    """Color with an Alpha channel.
+
+    Use when you need to export a color with alpha, as mathutils.Color lacks
+    an alpha channel.
+    See https://developer.blender.org/T53540
+    """
+
+    def __init__(self, values):
+        self.values = values
+
+    def to_string(self):
+        """Convert the color to serialized form"""
+        return color_to_string(self.values)
+
+
 def fix_matrix(mtx):
     """ Shuffles a matrix to change from y-up to z-up"""
     # TODO: can this be replaced my a matrix multiplcation?
@@ -403,10 +420,10 @@ def gamma_correct(color):
 
 
 # ------------------ Implicit Conversions of Blender Types --------------------
-def mat4_to_string(mtx):
+def mat4_to_string(mtx, prefix='Transform(', suffix=')'):
     """Converts a matrix to a "Transform" string that can be parsed by Godot"""
     mtx = fix_matrix(mtx)
-    array = Array('Transform(')
+    array = Array(prefix, suffix=suffix)
     for row in range(3):
         for col in range(3):
             array.append(mtx[row][col])

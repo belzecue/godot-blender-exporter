@@ -115,6 +115,14 @@ class GodotExporter:
                 obj,
                 parent_gd_node
             )
+        if ("PARTICLE" in self.config['object_types'] and
+                converters.has_particle(obj)):
+            converters.MULTIMESH_EXPORTER(
+                self.escn_file,
+                self.config,
+                obj,
+                parent_gd_node
+            )
 
         # Perform the export, note that `exported_node.parent` not
         # always the same as `parent_gd_node`, as sometimes, one
@@ -133,7 +141,7 @@ class GodotExporter:
         # CollisionShape node has different direction in blender
         # and godot, so it has a -90 rotation around X axis,
         # here rotate its children back
-        if (exported_node.parent is not None and
+        if (hasattr(exported_node, "parent") and
                 exported_node.parent.get_type() == 'CollisionShape'):
             exported_node['transform'] = (
                 _AXIS_CORRECT.inverted() @
@@ -158,7 +166,8 @@ class GodotExporter:
         """Checks if a node should be exported:"""
         if obj.type not in self.config["object_types"]:
             return False
-
+        if self.config["use_included_in_render"] and obj.hide_render:
+            return False
         if self.config["use_visible_objects"]:
             view_layer = bpy.context.view_layer
             if obj.name not in view_layer.objects:
